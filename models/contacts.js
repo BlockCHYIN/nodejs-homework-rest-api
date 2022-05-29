@@ -1,3 +1,4 @@
+const uniqid = require("uniqid");
 const fs = require('fs/promises');
 const path = require('path');
 const contactsPath = path.resolve('./contacts.json');
@@ -23,16 +24,22 @@ const removeContact = async (contactId) => {
   return data.length !== newData.length;
 };
 
-const addContact = async (body) => {
+const addContact = async ({name, email, phone}) => {
+  const newContact = {
+    id: uniqid(),
+    name,
+    email,
+    phone,
+  };
   try {
-    const data = await listContacts();
-    const newData = [...data, body];
-    await fs.writeFile(contactsPath, JSON.stringify(newData), 'utf8');
-    return body;
-  } catch (err) {
-    console.log(err);
+    const contacts = await listContacts();
+    const updatedContacts = [...contacts, newContact];
+    await fs.writeFile(contactsPath, JSON.stringify(updatedContacts));
+
+  } catch (error) {
+    console.log(error);
   }
-};
+}
 
 const updateContact = async (contactId, body) => {
   try {
