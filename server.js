@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
-const app = require('./app')
+const dotenv = require('dotenv');
+
+const app = require('./app');
+
+dotenv.config();
 
 const connection = mongoose.connect(
   "mongodb+srv://CrazyReLoad:CrazyReLoad@cluster0.tifom.mongodb.net/?retryWrites=true&w=majority",
