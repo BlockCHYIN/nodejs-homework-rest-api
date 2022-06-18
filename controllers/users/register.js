@@ -1,27 +1,30 @@
-const { User } = require('../../models');
-const bcrypt = require('bcrypt');
-const res = require('express/lib/response');
+const { User } = require("../../models");
+const bcrypt = require("bcrypt");
+const gravatar = require("gravatar");
 
-const register = async (req, resl, next) => {
+const register = async (req, res, next) => {
     const { email, password } = req.body;
 
     try {
+        const avatarURL = gravatar.url(email);
         const result = await User.create({
             email,
             password: await bcrypt.hash(password, 10),
+            avatarURL,
         });
         res.status(201).json({
             user: {
                 email: result.email,
                 subscription: result.subscription,
+                avatarURL,
             },
         });
-    } catch (err) {
-        if (err.code === 11000) {
-            err.status = 409;
-            err.message = "Email in use";
+    } catch (e) {
+        if (e.code === 11000) {
+            e.status = 409;
+            e.message = "Email in use";
         }
-        next(err);
+        next(e);
     }
 };
 
