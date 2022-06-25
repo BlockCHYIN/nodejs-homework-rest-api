@@ -10,6 +10,14 @@ const checkAuth = async (req, res, next) => {
         if (bearer !== "Bearer") {
             throw new Unauthorized("Not authorized");
         }
+        const { id } = jwt.verify(token, process.env.SECRET_KEY);
+        const user = await User.findById(id);
+        if (!user.verify) {
+            throw new Unauthorized("No confirm email");
+        }
+        if (user?.token !== token) {
+            throw new Unauthorized("Not authorized");
+        }
         req.user = user;
         next();
     } catch (err) {
